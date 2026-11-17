@@ -4,7 +4,6 @@
 A free gate / expander / ducker for [REAPER](https://www.reaper.fm), written as a JSFX (macOS / Windows / Linux), part of the
 [Nube plugins](https://github.com/KevinMeneses/nube-plugins).
 
-![Nube Gate](docs/captura.png)
 
 Gate, expander and ducker modes; level detection with hysteresis or **transient detection** (opens on hits even when
 the tail stays above the threshold); threshold, hysteresis, range up to ∞, attack, hold, release, ratio and knee;
