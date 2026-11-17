@@ -3,3 +3,4 @@ tests/signals/peaks/
 *.reapeaks
 __pycache__/
 .DS_Store
+tests/signals/
