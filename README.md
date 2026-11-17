@@ -90,7 +90,7 @@ La segunda perilla cambia según el modo: **Histéresis** (gate/ducker por nivel
 
 ### Disparar MIDI (doblar el kick con un sample)
 
-1. En la pista del kick pon Nube Gate con el preset *Disparo MIDI: kick → nota 36* (rango 0: no le cambia el sonido).
+1. En la pista del kick pon Nube Gate con el preset *Disparo MIDI: kick a nota 36* (rango 0: no le cambia el sonido).
 2. Crea una pista con un sampler (o Nube Synth) y un envío **solo MIDI** desde la del kick.
 
 ## Presets
@@ -110,7 +110,7 @@ La segunda perilla cambia según el modo: **Histéresis** (gate/ducker por nivel
 | Ducker: la voz baja la música (3/4) | Ducker externo, −36 dB, −6 dB, 10/100/300 ms |
 | Kick abre el bajo / pad (3/4) | Gate externo, −30 dB, rango 40, hold 60, release 150 |
 | Guitarra / amp: ruido (Expansor) | Expansor 1:3, −50 dB, rodilla 10, rango 20 |
-| Disparo MIDI: kick → nota 36 | Por golpes, rango 0 (no toca el audio), lookahead 3, MIDI de salida |
+| Disparo MIDI: kick a nota 36 | Por golpes, rango 0 (no toca el audio), lookahead 3, MIDI de salida |
 
 ## Estructura
 

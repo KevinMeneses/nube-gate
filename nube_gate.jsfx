@@ -28,7 +28,7 @@ slider21:100<0,100,1>-Mezcla (%)
 slider22:0<-24,24,0.1>-Ganancia (dB)
 slider23:0<0,2,1{Apagado,Salida (nota en cada golpe),Entrada (las notas abren)}>-MIDI
 slider24:36<0,127,1>-Nota MIDI
-slider25:0<0,15,1{-,Voz Tonor - Gate (Nube baja),Voz: limpiar entre frases (Expansor),Voz rap: gate preciso,Kick apretado,Caja sin hi-hat,Toms,Hi-hat corto,Bateria: acortar colas (Transitorio),808: cortar la cola,Reverb gateada (80s),Ducker: la voz baja la musica (3/4),Kick abre el bajo / pad (3/4),Guitarra / amp: ruido (Expansor),Disparo MIDI: kick -> nota 36,Por defecto}>-Cargar preset
+slider25:0<0,15,1{-,Voz Tonor - Gate (Nube baja),Voz: limpiar entre frases (Expansor),Voz rap: gate preciso,Kick apretado,Caja sin hi-hat,Toms,Hi-hat corto,Bateria: acortar colas (Transitorio),808: cortar la cola,Reverb gateada (80s),Ducker: la voz baja la musica (3/4),Kick abre el bajo / pad (3/4),Guitarra / amp: ruido (Expansor),Disparo MIDI: kick a nota 36,Por defecto}>-Cargar preset
 
 in_pin:Entrada L
 in_pin:Entrada R
@@ -220,7 +220,7 @@ function preset_name(n)
   n == 11 ? "Ducker: la voz baja la musica (3/4)" :
   n == 12 ? "Kick abre el bajo / pad (3/4)" :
   n == 13 ? "Guitarra / amp: ruido (Expansor)" :
-  n == 14 ? "Disparo MIDI: kick -> nota 36" :
+  n == 14 ? "Disparo MIDI: kick a nota 36" :
   n == 15 ? "Por defecto" : "";
 );
 // pr(modo, umbral, histeresis, rango, ataque, hold, release, lookahead)
@@ -546,12 +546,13 @@ function curve_out(L, path) local(r, t)
 // ---------------------------------------------------------- ayudas
 function mode_desc(m, line)
 (
+  // lineas cortas: la tarjeta mide ~210 px con la ventana por defecto
   m == 0 ? (
-    line == 0 ? "Compuerta: deja pasar lo que supera el umbral y baja" : line == 1 ? "el resto (Rango). Histeresis = cierra mas abajo, no tiembla." : "Ruido entre frases, bateria, colas. Transitorio = solo golpes.";
+    line == 0 ? "Pasa lo que supera el umbral;" : line == 1 ? "lo demas baja lo que diga el Rango." : "Voz, bateria, colas de reverb.";
   ) : m == 1 ? (
-    line == 0 ? "Expansor: bajo el umbral baja de a poco segun el ratio" : line == 1 ? "(1:2 = cada dB que baja la entrada, baja 2). Mas natural." : "Voz, guitarra, ambientes: limpia sin cortar las colas.";
+    line == 0 ? "Bajo el umbral baja de a poco," : line == 1 ? "segun el ratio (1:2, 1:4...)." : "Natural: limpia sin cortar colas.";
   ) : (
-    line == 0 ? "Ducker: al reves. Cuando el sidechain supera el umbral," : line == 1 ? "baja la senal el Rango, y la devuelve con el Release." : "Voz que baja la musica o el delay (sidechain 3/4).";
+    line == 0 ? "Al reves: si el sidechain supera" : line == 1 ? "el umbral, baja la senal el Rango." : "La voz baja la musica (SC 3/4).";
   );
 );
 
