@@ -1,11 +1,11 @@
 """Ayudante para probar la interfaz con cliclick (ventana del FX en su posición/tamaño por defecto)."""
 import subprocess, time, pathlib, re
-WX, WY = 26, 66 + 53            # esquina del área gráfica del FX (puntos), bajo la cabecera de REAPER
+WX, WY = 32, 117.5           # esquina del área gráfica del FX (puntos), medida en una captura
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 def pt(x, y): return f"{round(WX + x)},{round(WY + y)}"
 def cc(*args): subprocess.run(["cliclick", "-w", "60", *args], check=True); time.sleep(0.4)
 def wheel(n): subprocess.run(["swift", str(ROOT / "tests/scroll.swift"), str(n)], check=True); time.sleep(0.4)
-def shot(path): subprocess.run(["screencapture", "-x", "-R26,66,1000,693", path], check=True); return path
+def shot(path): subprocess.run(["screencapture", "-x", "-R32,117,1000,640", path], check=True); return path
 def dump():
     p = ROOT / "tests/out/dump.txt"; p.unlink(missing_ok=True)
     subprocess.Popen(["/Applications/REAPER.app/Contents/MacOS/REAPER", "-nonewinst", str(ROOT / "tests/ui_dump.lua")],

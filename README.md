@@ -4,6 +4,8 @@
 A free gate / expander / ducker for [REAPER](https://www.reaper.fm), written as a JSFX (macOS / Windows / Linux), part of the
 [Nube plugins](https://github.com/KevinMeneses/nube-plugins).
 
+![Nube Gate](docs/captura.png)
+
 
 Gate, expander and ducker modes; level detection with hysteresis or **transient detection** (opens on hits even when
 the tail stays above the threshold); threshold, hysteresis, range up to ∞, attack, hold, release, ratio and knee;
@@ -27,6 +29,8 @@ listen, every feature is verified by rendering test cases inside REAPER and comp
 ## Español
 Gate para REAPER (JSFX, macOS/Windows/Linux), hermano de [Nube Comp](https://github.com/KevinMeneses/nube-comp): fácil de
 usar y con lo que traen los gates de pago (Pro-G, Drumgate, el gate de las consolas SSL).
+
+![Nube Gate](docs/captura.png)
 
 - **3 modos**:
   - **Gate**: deja pasar lo que supera el umbral y baja el resto lo que diga el **Rango**.
@@ -123,7 +127,7 @@ La segunda perilla cambia según el modo: **Histéresis** (gate/ducker por nivel
   MIDI de salida (6 notas en su lugar ±1 ms, velocidad, número, nota apagada) con `tests/midi_probe.jsfx`, MIDI de
   entrada, los 15 presets y una voz real (preset 3: frases intactas y ruido −19 dB; preset 1 contra el ReaGate de la cadena).
 - `tests/ui_demo.lua` / `tests/ui_close.lua` / `tests/reopen.sh`: abren y cierran una pestaña de demo con audio.
-- `tests/ui_test.py` + `tests/ui.py` + `tests/ui_dump.lua` + `tests/scroll.swift`: pruebas de la interfaz con el mouse
+- `tests/ui_test.py` + `tests/ui.py` + `tests/ui_dump.lua` + `tests/scroll.swift`: pruebas de la interfaz con el mouse (17 chequeos: modos, detección, perillas, gráfica, curva, rueda, botones)
   (`cliclick`). Mueven el mouse de verdad: no correrlas mientras se usa REAPER.
 - `tests/perf.lua`: CPU en el peor caso.
 

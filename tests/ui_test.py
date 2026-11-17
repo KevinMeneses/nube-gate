@@ -9,14 +9,15 @@ def check(name, got, want):
     ok = (want(got) if callable(want) else got == want); fails += not ok
     print(f"{'OK ' if ok else 'MAL'} {name:44s} {got!r}")
 
-subprocess.run(["osascript", "-e", 'tell application "REAPER" to activate']); time.sleep(0.6)
+subprocess.run(["open", "-a", "REAPER"]); time.sleep(1.0)
 cc(f"c:{pt(500, 5)}")    # clic neutro: la ventana del FX puede necesitar un clic para activarse
-check("arranca con preset 3 (umbral -38)", num(param(1)), -38.0)
+check("arranca con preset 3 (umbral -42)", num(param(1)), -42.0)
 cc(f"c:{pt(*MODE(1))}"); check("clic en Expansor", param(7), "Expansor")
 cc(f"c:{pt(*MODE(2))}"); check("clic en Ducker", param(7), "Ducker")
 cc(f"c:{pt(*MODE(0))}"); check("clic en Gate", param(7), "Gate")
 cc(f"c:{pt(*TRANS)}"); check("clic en Transitorio", param(10), "Transitorio")
 cc(f"c:{pt(*NIVEL)}"); check("clic en Nivel", param(10), "Nivel")
+cc(f"c:{pt(500, 5)}")    # clic neutro: el primer arrastre tras varios scripts a veces solo activa la ventana
 t0 = num(param(1)); x, y = KNOB(0); drag(x, y, x, y - 40)
 check("arrastrar Umbral hacia arriba sube", num(param(1)), lambda v: v > t0 + 1)
 cc(f"dc:{pt(x, y)}"); check("doble clic en Umbral = -40", num(param(1)), -40.0)

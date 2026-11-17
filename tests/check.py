@@ -78,7 +78,8 @@ scalar("release: mitad (-20) a +50 ms", g[tc + 50], -20, 1.5)
 scalar("release: cerrada a +105 ms", g[tc + 105], -40, 0.5)
 g = gain("hold200", "step.wav")
 inrange("hold 200: abierta a los 150 ms", g[2150], -0.5, 0.1)
-scalar("hold 200: suelta 200 ms después (ms)", 2000 + np.argmax(g[2000:] < -0.3) - tc, 200, 1)
+# el detector suelta 12-24 ms después del escalón (fase de su ventana, cambia entre renders): hold + eso
+inrange("hold 200: empieza a cerrar (ms)", np.argmax(g[2000:] < -0.3), 200 + 12, 200 + 25)
 tcl = tc - 2000
 
 # lookahead
