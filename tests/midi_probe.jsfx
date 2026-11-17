@@ -1,0 +1,16 @@
+desc:Nube Gate - sonda MIDI para las pruebas (no es para usar)
+// Reemplaza el audio por impulsos: nota encendida -> L = velocidad/127, R = nota/127; nota apagada -> R = -nota/127
+@init
+buf = 0;
+@block
+n = 0;
+while (midirecv(ofs, m1, m2, m3)) (
+  st = m1 & 0xF0;
+  (st == 0x90 && m3 > 0) ? ( buf[n * 3] = ofs; buf[n * 3 + 1] = m3 / 127; buf[n * 3 + 2] = m2 / 127; n += 1; ) :
+  (st == 0x80 || st == 0x90) ? ( buf[n * 3] = ofs; buf[n * 3 + 1] = 0; buf[n * 3 + 2] = -m2 / 127; n += 1; );
+);
+i = 0; smp = 0;
+@sample
+spl0 = spl1 = 0;
+while (i < n && buf[i * 3] <= smp) ( spl0 = buf[i * 3 + 1]; spl1 = buf[i * 3 + 2]; i += 1; );
+smp += 1;
