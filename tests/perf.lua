@@ -2,6 +2,7 @@
 local OUT = debug.getinfo(1, "S").source:match("^@(.*)/[^/]*$") .. "/out"
 local AUDIO = os.getenv("HOME") .. "/Music/ClaudeBeats/Master/Nube baja (master X20).wav"
 local f = io.open(OUT .. "/perf.txt", "w")
+local PREV = reaper.EnumProjects(-1)   -- pestaña activa de antes (puede ser de otra sesión): se restaura al final
 reaper.Main_OnCommand(40859, 0)
 reaper.InsertTrackAtIndex(0, false); local tr = reaper.GetTrack(0, 0)
 local item = reaper.AddMediaItemToTrack(tr); local take = reaper.AddTakeToMediaItem(item)
@@ -23,4 +24,5 @@ local t_full = render("perf_todo", 10, function(fx)
 end)
 f:write(string.format("sin plugin %.2f s | 10 instancias en el peor caso %.2f s (60 s de audio)\n", t_empty, t_full))
 reaper.Main_SaveProjectEx(0, OUT .. "/_tmp_perf.rpp", 0); reaper.Main_openProject("noprompt:" .. OUT .. "/_tmp_perf.rpp"); reaper.Main_OnCommand(40860, 0)
+if PREV and reaper.ValidatePtr(PREV, "ReaProject*") then reaper.SelectProjectInstance(PREV) end
 f:write("done\n"); f:close()

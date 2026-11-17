@@ -151,18 +151,27 @@ for p in range(1, 16):
     else:
         loud = lvl(f"preset{p}", 1.5, 1.9); quiet = lvl(f"preset{p}", 2.5, 2.9)
         if p == 8: scalar("preset 8 (transitorio): sostenido baja 12", loud, -22, 0.5)
-        else: scalar(f"preset {p}: parte fuerte pasa", loud, -10, 0.3)
+        else: scalar(f"preset {p}: parte fuerte pasa", loud, -10 + (20 * np.log10(1 + a(-15.1)) if p == 1 else 0), 0.3)
         if p == 14: scalar("preset 14 (solo MIDI): intacto", quiet, -60, 0.1)
         else: inrange(f"preset {p}: parte baja se baja", quiet, -400, -66)
 
-# voz real (si está la grabación): las frases pasan intactas y el ruido entre frases baja ~15 dB
+# voz real (si está la grabación): preset 3 limpia el ruido entre frases sin tocar la voz; preset 1 = el ReaGate de Voz Tonor
 V = pathlib.Path.home() / "Music/ClaudeBeats/Media/voz_sola_seca.wav"
 if V.exists() and (D / "voz_real.wav").exists():
-    xi = sf.read(V)[0]; xo = load("voz_real"); xi = xi if xi.ndim == 1 else xi[:, 0]; xo = xo[:len(xi), 0]
-    n = int(0.02 * SR); m = len(xo) // n
-    ri = db(np.sqrt(np.mean(xi[:m * n].reshape(m, n) ** 2, 1))); ro = db(np.sqrt(np.mean(xo[:m * n].reshape(m, n) ** 2, 1)))
-    print(f"    voz real: {np.sum(ri > -30)} ventanas de voz, {np.sum((ri < -50) & (ri > -120))} de ruido")
-    inrange("voz real: frases intactas (mediana dB)", np.median((ro - ri)[ri > -30]), -0.3, 0.1)
-    inrange("voz real: ruido entre frases baja (dB)", np.median((ro - ri)[(ri < -50) & (ri > -120)]), -16, -12)
+    xi = sf.read(V)[0]; xi = xi if xi.ndim == 1 else xi[:, 0]
+    n = int(0.02 * SR); m = len(xi) // n
+    fr = lambda x: db(np.sqrt(np.mean(x[:m * n].reshape(m, n) ** 2, 1)))
+    ri = fr(xi); voz = ri > -30; ruido = (ri < -50) & (ri > -120)
+    gf = lambda name: fr(load(name)[:len(xi), 0]) - ri
+    print(f"    voz real: {voz.sum()} ventanas de voz, {ruido.sum()} de ruido (20 ms)")
+    g = gf("voz_real")
+    inrange("voz real, preset 3: frases intactas (mediana)", np.median(g[voz]), -0.3, 0.1)
+    inrange("voz real, preset 3: frases, peor 5 %", np.percentile(g[voz], 5), -1.5, 0.1)
+    inrange("voz real, preset 3: ruido entre frases baja", np.median(g[ruido]), -21, -17)
+    if (D / "voz_reagate.wav").exists():
+        d = gf("voz_p1") - gf("voz_reagate")
+        print(f"    preset 1 vs ReaGate: ruido {np.median(gf('voz_reagate')[ruido]):+.2f} dB (el ReaGate tampoco cierra con este ruido)")
+        inrange("preset 1 = ReaGate: diferencia mediana", np.median(np.abs(d[ri > -120])), 0, 0.1)
+        inrange("preset 1 = ReaGate: diferencia, peor 5 %", np.percentile(np.abs(d[ri > -120]), 95), 0, 0.5)
 print("\nFALLAS:", fails)
 sys.exit(1 if fails else 0)

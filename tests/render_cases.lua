@@ -67,8 +67,13 @@ end
 
 -- voz real (grabación propia, no está en el repo): preset 1 sobre la voz seca de Nube baja
 local VOZ = os.getenv("HOME") .. "/Music/ClaudeBeats/Media/voz_sola_seca.wav"
-if reaper.file_exists(VOZ) then CASES[#CASES + 1] = {"voz_real", VOZ, {[25] = 1}} end
+if reaper.file_exists(VOZ) then
+  CASES[#CASES + 1] = {"voz_real", VOZ, {[25] = 3}}          -- preset 3: limpia el ruido entre frases
+  CASES[#CASES + 1] = {"voz_p1", VOZ, {[25] = 1}}            -- preset 1: igual al ReaGate de Voz Tonor
+  CASES[#CASES + 1] = {"voz_reagate", VOZ, {}, 2, "reagate"} -- el ReaGate de verdad (solo el gate de la cadena)
+end
 
+local PREV = reaper.EnumProjects(-1)   -- pestaña activa de antes (puede ser de otra sesión): se restaura al final
 reaper.Main_OnCommand(40859, 0) -- nueva pestaña
 reaper.GetSetProjectInfo(0, "PROJECT_SRATE", 48000, true)
 reaper.GetSetProjectInfo(0, "PROJECT_SRATE_USE", 1, true)
@@ -89,7 +94,16 @@ for _, c in ipairs(CASES) do
     reaper.UpdateItemInProject(item)
     while reaper.TrackFX_GetCount(tr) > 0 do reaper.TrackFX_Delete(tr, 0) end
     if mtr then reaper.DeleteTrack(mtr); mtr = nil end
-    local fx = reaper.TrackFX_AddByName(tr, "JS:Nube Gate/nube_gate.jsfx", false, -1)
+    local fx
+    if extra == "reagate" then
+      reaper.TrackFX_AddByName(tr, "Claude/Voz Tonor 1 · rap (versos).RfxChain", false, -1)
+      for i = reaper.TrackFX_GetCount(tr) - 1, 0, -1 do
+        local _, nm = reaper.TrackFX_GetFXName(tr, i, ""); if not nm:find("Gate") then reaper.TrackFX_Delete(tr, i) end
+      end
+      fx = 0
+    else
+      fx = reaper.TrackFX_AddByName(tr, "JS:Nube Gate/nube_gate.jsfx", false, -1)
+    end
     if fx < 0 then log("ERROR no cargó el FX") break end
     if params[25] then reaper.TrackFX_SetParam(tr, fx, 24, params[25]) end
     for s_, v in pairs(params) do
@@ -133,5 +147,6 @@ if mtr then reaper.DeleteTrack(mtr) end
 reaper.Main_SaveProjectEx(0, OUT .. "/_tmp_test.rpp", 0)
 reaper.Main_openProject("noprompt:" .. OUT .. "/_tmp_test.rpp")
 reaper.Main_OnCommand(40860, 0) -- cerrar pestaña
+if PREV and reaper.ValidatePtr(PREV, "ReaProject*") then reaper.SelectProjectInstance(PREV) end
 log("done")
 logf:close()

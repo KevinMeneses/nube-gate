@@ -193,10 +193,10 @@ function reset_state()
   memset(stA, 0, 7); memset(stB, 0, 7);
   mode == 1 ? ( stA[2] = stB[2] = 1; );
   a_cA = a_cB = a_pA = a_pB = 0; a_wc = 0; a_msA = a_msB = 0; a_ef = a_es = 0; a_trp = 0; a_tl = 0;
-  a_held = 0; a_mp = 0; a_mon = 0; a_moff = 0;
+  a_mon ? a_offp = a_mnote; a_held = 0; a_mp = 0; a_mon = 0; a_moff = 0;
 );
 
-a_w = 0; a_hc = 0; hw = 0; upd = 0;
+a_w = 0; a_hc = 0; hw = 0; upd = 0; a_offp = -1;
 _i = 0; loop(NH, histIn[_i] = histOut[_i] = -200; histGR[_i] = 0; histOpen[_i] = 0; _i += 1; );
 h_in = 0; h_out = 0; h_gr = 0; h_op = 0; lvl_disp = -200; a_lmax = -200;
 update_params();
@@ -233,9 +233,10 @@ function load_preset(n)
   pr(0, -40, 4, 40, 0.5, 50, 100, 0);
   sset(8, 2); sset(9, 6); sset(10, 0); sset(11, 6); sset(13, 0); sset(14, 100); sset(15, 0); sset(16, 0);
   sset(17, 20); sset(18, 20000); sset(19, 0); sset(20, 0); sset(21, 100); sset(22, 0); sset(23, 0); sset(24, 36);
-  n == 1 ? ( pr(0, -45.1, 0, 15.1, 1, 79, 150, 5); ) :
+  // 1: el ReaGate de Voz Tonor (Dry -15.1 + Wet 0 se suman): rango inf, mezcla 85 % y +1.4 dB dan lo mismo
+  n == 1 ? ( pr(0, -45.1, 0, 80, 1, 79, 150, 5); sset(21, 85); sset(22, 1.4); ) :
   n == 2 ? ( pr(1, -42, 4, 12, 2, 60, 200, 3); sset(8, 2); sset(9, 8); sset(17, 100); ) :
-  n == 3 ? ( pr(0, -38, 6, 20, 0.5, 60, 120, 3); sset(17, 120); ) :
+  n == 3 ? ( pr(0, -42, 6, 20, 0.5, 60, 120, 3); sset(13, 1); sset(17, 120); ) :
   n == 4 ? ( pr(0, -24, 4, 40, 0.1, 30, 80, 2); sset(18, 250); ) :
   n == 5 ? ( pr(0, -24, 6, 30, 0.1, 40, 120, 2); sset(17, 150); sset(18, 4000); ) :
   n == 6 ? ( pr(0, -30, 6, 30, 0.3, 100, 300, 3); sset(17, 60); sset(18, 2000); ) :
@@ -276,6 +277,8 @@ midi_mode == 2 ? (
     midisend(_ofs, _m1, _m2, _m3);
   );
 );
+// nota que quedo sonando al apagar el MIDI o cambiar de modo: se apaga aqui (no queda colgada en el sampler)
+a_offp >= 0 ? ( midisend(0, 0x80, a_offp, 0); a_offp = -1; );
 a_smp = 0;
 
 @sample
@@ -330,16 +333,18 @@ a_gA = g_of(a_yA); a_gB = g_of(a_yB);
 // MIDI de salida: nota en cada apertura, velocidad = pico del golpe (0 dBFS = 127)
 midi_mode == 1 ? (
   a_ev = cmode == 3 ? stB : stA;
-  a_ev[5] ? ( a_ev[5] = 0; a_mon ? ( midisend(a_smp, 0x80, note, 0); a_mon = 0; ); a_mp = mwin; a_mv = -200; a_moff = 0; );
-  a_ev[6] ? ( a_ev[6] = 0; a_mp > 0 ? a_moff = 1 : a_mon ? ( midisend(a_smp, 0x80, note, 0); a_mon = 0; ); );
+  a_ev[5] ? ( a_ev[5] = 0; a_mon ? ( midisend(a_smp, 0x80, a_mnote, 0); a_mon = 0; ); a_mp = mwin; a_mv = -200; a_moff = 0; );
+  a_ev[6] ? ( a_ev[6] = 0; a_mp > 0 ? a_moff = 1 : a_mon ? ( midisend(a_smp, 0x80, a_mnote, 0); a_mon = 0; ); );
   a_mp > 0 ? (
     a_mv = max(a_mv, a_m);
     (a_mp -= 1) <= 0 ? (
-      midisend(a_smp, 0x90, note, clamp(floor(127 + a_mv * 127 / 60 + 0.5), 1, 127)); a_mon = 1;
-      a_moff ? ( midisend(a_smp, 0x80, note, 0); a_mon = 0; a_moff = 0; );
+      midisend(a_smp, 0x90, note, clamp(floor(127 + a_mv * 127 / 60 + 0.5), 1, 127)); a_mon = 1; a_mnote = note;
+      a_moff ? ( midisend(a_smp, 0x80, a_mnote, 0); a_mon = 0; a_moff = 0; );
     );
   );
-) : ( stA[5] = stA[6] = stB[5] = stB[6] = 0; );
+);
+// los eventos se consumen siempre (los del canal que no se usa no deben quedar pendientes)
+stA[5] = stA[6] = stB[5] = stB[6] = 0;
 
 // lookahead: el audio se retrasa, la deteccion no
 dl[a_w] = a_A; dl[DLN + a_w] = a_B;

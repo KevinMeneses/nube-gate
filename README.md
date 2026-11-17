@@ -98,9 +98,9 @@ La segunda perilla cambia según el modo: **Histéresis** (gate/ducker por nivel
 
 | Preset | Qué hace |
 |---|---|
-| Voz Tonor - Gate (Nube baja) | El "Voz · Gate" de las cadenas *Voz Tonor*: −45.1 dB, rango 15.1, 1/79/150 ms, pre-apertura 5 ms |
+| Voz Tonor - Gate (Nube baja) | Igual al ReaGate "Voz · Gate" de las cadenas *Voz Tonor* (medido: ±0.1 dB): −45.1 dB, 1/79/150 ms, pre-apertura 5 ms; su Dry −15.1 se suma a la señal, por eso va con rango ∞, mezcla 85 % y +1.4 dB. Ojo: con el ruido del Tonor (picos de −44.6 dB) **no cierra nunca**, igual que el ReaGate; para limpiar usa el siguiente |
 | Voz: limpiar entre frases (Expansor) | Expansor 1:2, −42 dB, rodilla 8, rango 12, SC corte 100 Hz |
-| Voz rap: gate preciso | −38 dB, histéresis 6, rango 20, 0.5/60/120 ms, lookahead 3, SC corte 120 Hz |
+| Voz rap: gate preciso | RMS, −42 dB, histéresis 6, rango 20, 0.5/60/120 ms, lookahead 3, SC corte 120 Hz. En la voz seca de Nube baja: frases intactas (0.0 dB) y el ruido entre frases −19 dB |
 | Kick apretado | −24 dB, rango 40, 0.1/30/80 ms, SC corte agudo 250 Hz (que el hi-hat no lo abra) |
 | Caja sin hi-hat | −24 dB, histéresis 6, rango 30, SC 150 Hz – 4 kHz |
 | Toms | −30 dB, rango 30, hold 100, release 300, SC 60 Hz – 2 kHz |
@@ -116,13 +116,13 @@ La segunda perilla cambia según el modo: **Histéresis** (gate/ducker por nivel
 ## Estructura
 
 - `nube_gate.jsfx`: el plugin (DSP + interfaz).
-- `tests/run.sh`: renderiza 53 casos en una pestaña temporal de REAPER y los compara con la teoría (79 chequeos, más que
+- `tests/run.sh`: renderiza 55 casos en una pestaña temporal de REAPER y los compara con la teoría (95 chequeos, más que
   ningún render tenga NaN ni quede desalineado): curva estática (gate, rango 15/40/∞, expansor con ratio, rango y
   rodilla, ducker), histéresis sobre una rampa de 10 dB/s (cierra en −46 y abre en −40, sin rebotes), 50 Hz cerca del
   umbral sin temblar, ataque/release lineales en dB, hold, lookahead (y que la latencia quede compensada), sidechain
   externo, filtros y escuchar SC, escuchar cambios, mezcla, ganancia, enlace, M/S, RMS, transitorios contra nivel,
   MIDI de salida (6 notas en su lugar ±1 ms, velocidad, número, nota apagada) con `tests/midi_probe.jsfx`, MIDI de
-  entrada, los 15 presets y una voz real (frases intactas, ruido −14 dB).
+  entrada, los 15 presets y una voz real (preset 3: frases intactas y ruido −19 dB; preset 1 contra el ReaGate de la cadena).
 - `tests/ui_demo.lua` / `tests/ui_close.lua` / `tests/reopen.sh`: abren y cierran una pestaña de demo con audio.
 - `tests/ui_test.py` + `tests/ui.py` + `tests/ui_dump.lua` + `tests/scroll.swift`: pruebas de la interfaz con el mouse
   (`cliclick`). Mueven el mouse de verdad: no correrlas mientras se usa REAPER.
@@ -144,4 +144,4 @@ La segunda perilla cambia según el modo: **Histéresis** (gate/ducker por nivel
   saltan a su valor (no se deslizan desde el anterior).
 
 Nota sobre las pruebas: necesitan REAPER y Python con numpy, scipy y soundfile (`NUBE_PY=/ruta/a/python tests/run.sh`).
-El caso de voz real usa una grabación propia que no está en el repo; sin ella se salta.
+Los casos de voz real usan una grabación propia y la cadena *Voz Tonor 1*, que no están en el repo; sin ellas se saltan.
