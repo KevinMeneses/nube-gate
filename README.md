@@ -12,7 +12,7 @@ the tail stays above the threshold); threshold, hysteresis, range up to ∞, att
 lookahead with latency compensation; peak/RMS detector, stereo link, stereo / M-S / mid-only / side-only; internal or
 external (3/4) sidechain with low/high cut filters; listen to the sidechain or to what gets removed; mix and output
 gain; **MIDI out** (one note per hit, velocity from the hit's peak — for drum replacement) and **MIDI in** (notes open
-the gate); live graphs and 15 presets. ~0.5 % CPU.
+the gate); live graphs and 27 presets. ~0.5 % CPU.
 
 **Install** — with [ReaPack](https://reapack.com): *Extensions → ReaPack → Import repositories*, paste
 `https://github.com/KevinMeneses/nube-plugins/raw/main/index.xml`, then install **Nube Gate**. Or copy `nube_gate.jsfx`
@@ -125,7 +125,7 @@ La segunda perilla cambia según el modo: **Histéresis** (gate/ducker por nivel
   umbral sin temblar, ataque/release lineales en dB, hold, lookahead (y que la latencia quede compensada), sidechain
   externo, filtros y escuchar SC, escuchar cambios, mezcla, ganancia, enlace, M/S, RMS, transitorios contra nivel,
   MIDI de salida (6 notas en su lugar ±1 ms, velocidad, número, nota apagada) con `tests/midi_probe.jsfx`, MIDI de
-  entrada, los 15 presets y una voz real (preset 3: frases intactas y ruido −19 dB; preset 1 contra el ReaGate de la cadena).
+  entrada, los 27 presets y una voz real (preset 3: frases intactas y ruido −19 dB; preset 1 contra el ReaGate de la cadena).
 - `tests/ui_demo.lua` / `tests/ui_close.lua` / `tests/reopen.sh`: abren y cierran una pestaña de demo con audio.
 - `tests/ui_test.py` + `tests/ui.py` + `tests/ui_dump.lua` + `tests/scroll.swift`: pruebas de la interfaz con el mouse (17 chequeos: modos, detección, perillas, gráfica, curva, rueda, botones)
   (`cliclick`). Mueven el mouse de verdad: no correrlas mientras se usa REAPER.

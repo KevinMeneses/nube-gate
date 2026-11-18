@@ -142,8 +142,16 @@ scalar("MIDI entrada: nota 2 abre", lvl("midi_in", 1.52, 1.58), -6, 0.1)
 scalar("MIDI entrada: después cerrada", lvl("midi_in", 2.0, 2.9), -46, 0.1)
 
 # presets
-for p in range(1, 16):
-    if p == 11:
+for p in range(1, 28):
+    if p == 24:   # el SC solo escucha el kick (corte agudo 200 Hz): la señal de prueba aguda no lo dispara
+        scalar("preset 24 (ducker por el kick): ignora un SC agudo", lvl("preset24", 0.4, 0.95), -10, 0.3)
+    elif p == 25:
+        inrange(f"preset {p} (ducker): baja con SC", -10 - lvl(f"preset{p}", 0.4, 0.95), 3, 12)
+        scalar(f"preset {p}: vuelve sin SC", lvl(f"preset{p}", 1.5, 1.9), -10, 0.3)
+    elif p == 23:
+        scalar("preset 23 (gate SC): abre con SC", lvl("preset23", 0.4, 0.95), -10, 0.3)
+        inrange("preset 23: baja sin SC", lvl("preset23", 1.5, 1.9), -40, -30)
+    elif p == 11:
         inrange("preset 11 (ducker): baja con SC", -10 - lvl("preset11", 0.4, 0.95), 5, 7)
         scalar("preset 11: vuelve sin SC", lvl("preset11", 1.5, 1.9), -10, 0.2)
     elif p == 12:
@@ -153,7 +161,8 @@ for p in range(1, 16):
         loud = lvl(f"preset{p}", 1.5, 1.9); quiet = lvl(f"preset{p}", 2.5, 2.9)
         if p == 8: scalar("preset 8 (transitorio): sostenido baja 12", loud, -22, 0.5)
         else: scalar(f"preset {p}: parte fuerte pasa", loud, -10 + (20 * np.log10(1 + a(-15.1)) if p == 1 else 0), 0.3)
-        if p == 14: scalar("preset 14 (solo MIDI): intacto", quiet, -60, 0.1)
+        if p in (14, 26): scalar(f"preset {p} (solo MIDI): intacto", quiet, -60, 0.1)
+        elif p == 22: inrange("preset 22 (expansor suave, rango 12): parte baja se baja", quiet, -400, -60)
         else: inrange(f"preset {p}: parte baja se baja", quiet, -400, -66)
 
 # voz real (si está la grabación): preset 3 limpia el ruido entre frases sin tocar la voz; preset 1 = el ReaGate de Voz Tonor
