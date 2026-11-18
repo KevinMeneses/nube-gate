@@ -59,9 +59,9 @@ local CASES = {
   {"midi_out_lvl", "step.wav",      P{[1] = -40, [5] = 0, [3] = 0, [23] = 1, [24] = 38}, 2, "probe"},
   {"midi_in",     "sine1k_m6_3s.wav", P{[1] = -40, [23] = 2}, 2, "midi_in"},
 }
-for p = 1, 15 do
-  local ext = p == 11 or p == 12
-  local src = ext and "sidechain4.wav" or (p == 4 or p == 9) and "step_low.wav" or p == 7 and "step_high.wav" or "step.wav"
+for p = 1, 27 do
+  local ext = p == 11 or p == 12 or (p >= 23 and p <= 25)
+  local src = ext and "sidechain4.wav" or (p == 4 or p == 9 or p == 19 or p == 21) and "step_low.wav" or p == 7 and "step_high.wav" or "step.wav"
   CASES[#CASES + 1] = {"preset" .. p, src, {[25] = p}, ext and 4 or 2}
 end
 

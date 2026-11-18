@@ -2,7 +2,7 @@ desc:Nube Gate - gate / expansor / ducker (histeresis, transitorios, sidechain, 
 //tags: gate noise-gate expander ducker dynamics sidechain lookahead midi trigger drums
 //author: Kev Meneses + Claude (Claude Code)
 //license: GPL-3.0-or-later
-//version: 1.0.0
+//version: 1.1.0
 
 slider1:-40<-80,0,0.1>-Umbral (dB)
 slider2:4<0,20,0.1>-Histeresis (dB)
@@ -28,7 +28,7 @@ slider21:100<0,100,1>-Mezcla (%)
 slider22:0<-24,24,0.1>-Ganancia (dB)
 slider23:0<0,2,1{Apagado,Salida (nota en cada golpe),Entrada (las notas abren)}>-MIDI
 slider24:36<0,127,1>-Nota MIDI
-slider25:0<0,15,1{-,Voz Tonor - Gate (Nube baja),Voz: limpiar entre frases (Expansor),Voz rap: gate preciso,Kick apretado,Caja sin hi-hat,Toms,Hi-hat corto,Bateria: acortar colas (Transitorio),808: cortar la cola,Reverb gateada (80s),Ducker: la voz baja la musica (3/4),Kick abre el bajo / pad (3/4),Guitarra / amp: ruido (Expansor),Disparo MIDI: kick a nota 36,Por defecto}>-Cargar preset
+slider25:0<0,27,1{-,Voz Tonor - Gate (Nube baja),Voz: limpiar entre frases (Expansor),Voz rap: gate preciso,Kick apretado,Caja sin hi-hat,Toms,Hi-hat corto,Bateria: acortar colas (Transitorio),808: cortar la cola,Reverb gateada (80s),Ducker: la voz baja la musica (3/4),Kick abre el bajo / pad (3/4),Guitarra / amp: ruido (Expansor),Disparo MIDI: kick a nota 36,Voz trap: limpiar respiraciones (Expansor),Voz drill: gate seco,Voz hablada / podcast (Expansor suave),Clap / snare de sample: cortar la cola,Kick: cortar el resonante,Overheads: limpiar sin cortar (Expansor),Bajo electrico: ruido entre notas,Sample de vinilo: bajar el ruido de fondo,Gate ritmico desde un hi-hat (3/4),Ducker: el kick baja el 808 (3/4),Ducker: la voz baja la reverb (3/4),Disparo MIDI: caja a nota 38,Por defecto}>-Cargar preset
 
 in_pin:Entrada L
 in_pin:Entrada R
@@ -204,7 +204,7 @@ reset_state();
 a_mk = mk_t; a_mix = mix_t;
 
 // ---------------------------------------------------------------- presets
-NPRESETS = 15;
+NPRESETS = 27;
 function preset_name(n)
 (
   n == 1 ? "Voz Tonor - Gate (Nube baja)" :
@@ -221,7 +221,19 @@ function preset_name(n)
   n == 12 ? "Kick abre el bajo / pad (3/4)" :
   n == 13 ? "Guitarra / amp: ruido (Expansor)" :
   n == 14 ? "Disparo MIDI: kick a nota 36" :
-  n == 15 ? "Por defecto" : "";
+  n == 15 ? "Voz trap: limpiar respiraciones (Expansor)" :
+  n == 16 ? "Voz drill: gate seco" :
+  n == 17 ? "Voz hablada / podcast (Expansor suave)" :
+  n == 18 ? "Clap / snare de sample: cortar la cola" :
+  n == 19 ? "Kick: cortar el resonante" :
+  n == 20 ? "Overheads: limpiar sin cortar (Expansor)" :
+  n == 21 ? "Bajo electrico: ruido entre notas" :
+  n == 22 ? "Sample de vinilo: bajar el ruido de fondo" :
+  n == 23 ? "Gate ritmico desde un hi-hat (3/4)" :
+  n == 24 ? "Ducker: el kick baja el 808 (3/4)" :
+  n == 25 ? "Ducker: la voz baja la reverb (3/4)" :
+  n == 26 ? "Disparo MIDI: caja a nota 38" :
+  n == 27 ? "Por defecto" : "";
 );
 // pr(modo, umbral, histeresis, rango, ataque, hold, release, lookahead)
 function pr(md, t, h, r, at, ho, rl, la)
@@ -248,6 +260,18 @@ function load_preset(n)
   n == 12 ? ( pr(0, -30, 4, 40, 0.5, 60, 150, 0); sset(16, 1); ) :
   n == 13 ? ( pr(1, -50, 4, 20, 1, 50, 150, 0); sset(8, 3); sset(9, 10); ) :
   n == 14 ? ( pr(0, -30, 4, 0, 0.1, 30, 50, 3); sset(10, 1); sset(11, 8); sset(23, 1); sset(24, 36); );
+  n == 15 ? ( pr(1, -38, 4, 10, 2, 40, 150, 3); sset(8, 2.5); sset(9, 8); sset(17, 120); );
+  n == 16 ? ( pr(0, -36, 6, 30, 0.3, 40, 80, 3); sset(13, 1); sset(17, 150); );
+  n == 17 ? ( pr(1, -50, 4, 10, 5, 100, 250, 5); sset(8, 1.8); sset(9, 10); sset(17, 80); );
+  n == 18 ? ( pr(0, -30, 4, 80, 0.1, 60, 60, 1); );
+  n == 19 ? ( pr(0, -28, 4, 80, 0.1, 80, 40, 2); sset(18, 300); );
+  n == 20 ? ( pr(1, -45, 4, 10, 1, 80, 250, 2); sset(8, 2); sset(9, 12); );
+  n == 21 ? ( pr(1, -50, 4, 20, 2, 60, 180, 2); sset(8, 3); sset(18, 1500); );
+  n == 22 ? ( pr(1, -55, 3, 12, 5, 100, 300, 5); sset(8, 2); sset(9, 12); );
+  n == 23 ? ( pr(0, -30, 4, 24, 0.5, 10, 60, 0); sset(16, 1); );
+  n == 24 ? ( pr(2, -30, 4, 8, 1, 20, 120, 0); sset(16, 1); sset(18, 200); );
+  n == 25 ? ( pr(2, -40, 4, 10, 5, 150, 400, 0); sset(16, 1); sset(17, 150); );
+  n == 26 ? ( pr(0, -30, 4, 0, 0.1, 30, 50, 3); sset(10, 1); sset(11, 8); sset(23, 1); sset(24, 38); sset(17, 150); );
   upd = 1;
 );
 
